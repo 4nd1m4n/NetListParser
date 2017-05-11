@@ -1,0 +1,13 @@
+* C:\users\aschau\Meine Dokumente\Master Drittes Semester\Übergabe_Schau\OPV-ideal.asc
+r2 p out 10k
+R1 in p 1k
+V1 in 0 1 AC 1
+XU1 p 0 out opv0
+XU2 N001 0 out2 0 nullor
+R3 N001 out2 10k
+R4 in N001 1k
+.op
+.options gfloat=0.0
+.lib HTWDD_DS/electronics.lib
+.backanno
+.end
