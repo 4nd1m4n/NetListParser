@@ -1,0 +1,5 @@
+# ignore all listed files/filetypes
+# ignore everythig in cwd (current working directory) starting with "." (so one can have copys of files that won't be committed)
+.*
+# ignore build folder
+build
