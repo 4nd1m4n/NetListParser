@@ -6,7 +6,7 @@
 #include <iostream>
 //#include <list>
 #include <vector>
-#include "globalConsts.h"
+#include "globalConsts.hpp"
 
 using namespace std;
 

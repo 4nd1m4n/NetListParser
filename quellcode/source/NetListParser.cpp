@@ -11,8 +11,8 @@
 #include <algorithm>
 #include <sys/stat.h>
 
-#include "Component.h"
-#include "globalConsts.h"
+#include "Component.hpp"
+#include "globalConsts.hpp"
 
 using namespace std;
 
