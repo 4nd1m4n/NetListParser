@@ -1,43 +1,43 @@
-#ifndef COMPONENT_H
-#define COMPONENT_H
+#ifndef COMPONENT_HPP
+#define COMPONENT_HPP
 
-#include <string>
-#include <sstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 //#include <list>
 #include <vector>
-#include "globalConsts.hpp"
+#include "GlobalConsts.hpp"
+#include "StringHandler.hpp"
 
 using namespace std;
 
-class Component
-{
-public:
+class Component {
+ public:
   Component();
   Component(string toParse);
   virtual ~Component();
 
   bool checkPars(const string &str, const string &pars);
-  void parseComponent(string toParse);
+  void parseToMembers(vector<string> &vecOfStr, string &componentName,
+                      unsigned int &numberOfNodeConnections,
+                      vector<string> &vecOfNodeNames, vector<string> &params);
+  void parseComponent(const string &toParse);
 
   string getName();
   string getNodeNameX(unsigned int x);
-  //list<string> getNodeList();
+  // list<string> getNodeList();
   vector<string> getNodeVector();
-  string getParameters();
+  vector<string> getParameters();
   unsigned int getNumberOfConnectedNodes();
   string getComponentType();
 
-protected:
-private:
+ protected:
+ private:
   string name;
-  //list<string> nodeNames;
   vector<string> nodeNames;
-  //string nodeName1;
-  //string nodeName2;
-  string parameters;
+  vector<string> parameters;
   unsigned int numberOfConnectedNodes;
   string componentType;
 };
 
-#endif // COMPONENT_H
+#endif  // COMPONENT_HPP

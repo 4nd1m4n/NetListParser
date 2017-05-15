@@ -1,5 +1,5 @@
-#ifndef GLOBALCONSTS_H
-#define GLOBALCONSTS_H
+#ifndef GLOBALCONSTS_HPP
+#define GLOBALCONSTS_HPP
 
 #include <string>
 using namespace std;
@@ -19,4 +19,4 @@ static const string PARS_F = "f";
 static const string PARS_G = "g";
 static const string PARS_H = "h";
 
-#endif // GLOBALCONSTS_H
+#endif  // GLOBALCONSTS_HPP
