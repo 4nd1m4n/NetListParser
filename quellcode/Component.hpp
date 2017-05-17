@@ -4,7 +4,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-//#include <list>
 #include <vector>
 #include "GlobalConsts.hpp"
 #include "StringHandler.hpp"
@@ -15,21 +14,21 @@ class Component {
  public:
   Component();
   Component(string toParse);
-  virtual ~Component();
+  ~Component();
 
-  bool checkPars(const string &str, const string &pars);
+  static bool checkPars(const string &str, const string &pars);
   void parseToMembers(vector<string> &vecOfStr, string &componentName,
                       unsigned int &numberOfNodeConnections,
                       vector<string> &vecOfNodeNames, vector<string> &params);
   void parseComponent(const string &toParse);
 
-  string getName();
-  string getNodeNameX(unsigned int x);
+  const string getName();
+  const string getXthNodeName(unsigned int x);
   // list<string> getNodeList();
-  vector<string> getNodeVector();
-  vector<string> getParameters();
-  unsigned int getNumberOfConnectedNodes();
-  string getComponentType();
+  // const vector<string> getNodeVector();
+  const vector<string> getParameters();
+  const unsigned int getNumberOfConnectedNodes();
+  const string getComponentType();
 
  protected:
  private:

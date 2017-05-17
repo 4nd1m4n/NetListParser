@@ -13,18 +13,10 @@
 
 #include "Component.hpp"
 #include "GlobalConsts.hpp"
+#include "NodeMapper.hpp"
 
 using namespace std;
 
-// functions
-bool checkPars(const string& str, const string& pars) {
-  if ((str.compare(0, 1, pars, 0, 1) ==
-       0)) {  // || ((str.compare(0, 1, pars, 1, 1) == 0) == true)) {
-    return true;
-  } else {
-    return false;
-  }
-}
 // Verlinkte Listen nutzen um die Bauteile intern zu repräsentieren
 // Über die args der main Funktion Parameterübgergabe realisieren, damit man die
 // Datei sampt Pfad angeben kann, die geparst werden soll.
@@ -94,7 +86,6 @@ int main(int argc, char* argv[]) {
   while (!netListFile.eof()) {
     getline(netListFile, lineContents);
 
-    // boost::algorithm::string::to_lower(lineContents);
     transform(lineContents.begin(), lineContents.end(), lineContents.begin(),
               ::tolower);
 
@@ -112,52 +103,25 @@ int main(int argc, char* argv[]) {
 
   cout << endl;
 
-  // list<string> deviceTermList;
-  list<Component> ComponentList;
+  list<Component> componentList;
   Component newComponent;
 
-  /*unsigned int*/ lineNumber = 0;
+  lineNumber = 0;
   for (auto const& itNL : netList) {
     lineNumber++;
     cout << setw(3) << lineNumber << ": ";
 
-    // stringstream currentLine(itNL);
-
     newComponent.parseComponent(itNL);
-    ComponentList.push_back(newComponent);
-
-    // cout << "\nParameters: " << newComponent.getParameters() << "\n";
-
-    /*if (checkPars(itNL, PARS_CMNT)) {
- cout << "* found.\n";
- } else if (checkPars(itNL, PARS_R)) {
- cout << "R found.\n";
- } else if (checkPars(itNL, PARS_L)) {
- cout << "L found.\n";
- } else if (checkPars(itNL, PARS_C)) {
- cout << "C found.\n";
- } else if (checkPars(itNL, PARS_D)) {
- cout << "D found.\n";
- } else if (checkPars(itNL, PARS_V)) {
- cout << "V found.\n";
- } else if (checkPars(itNL, PARS_I)) {
- cout << "I found.\n";
- } else if (checkPars(itNL, PARS_E)) {
- cout << "E found.\n";
- } else if (checkPars(itNL, PARS_F)) {
- cout << "F found.\n";
- } else if (checkPars(itNL, PARS_G)) {
- cout << "G found.\n";
- } else if (checkPars(itNL, PARS_H)) {
- cout << "H found.\n";
- } else if (checkPars(itNL, PARS_DOT)) {
- cout << ". found.\n";
- } else {
- cout << "Unknown found.\n";
- }*/
+    componentList.push_back(newComponent);
   }
 
-  cout << "NetListParser Exit.\n\n";
+  cout << endl;
+
+  NodeMapper kirchhoffNodeMap;
+  kirchhoffNodeMap.mapNodesToComponentsKCL(componentList);
+  cout << kirchhoffNodeMap.kirchhoffEquations();
+
+  cout << "\nNetListParser Exit.\n\n";
 
   return 0;
 }

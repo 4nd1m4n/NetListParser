@@ -21,12 +21,12 @@ Component::Component(string toParse) {
 Component::~Component() {}
 
 bool Component::checkPars(const string &str, const string &pars) {
-  // if (str.size)
-  if ((str.compare(0, 1, pars, 0, 1) == 0)) {
-    return true;
-  } else {
-    return false;
+  for (unsigned int i = 0; i < pars.size(); i++) {
+    if ((str.compare(0, 1, pars, i, 1) == 0)) {
+      return true;
+    }
   }
+  return false;
 }
 
 void Component::parseToMembers(vector<string> &vecOfStr, string &componentName,
@@ -75,10 +75,34 @@ void Component::parseComponent(const string &toParse) {
 
   } else if (checkPars(toParse, PARS_L)) {
     cout << "L found.\n";
+
+    componentType = PARS_L;
+    numberOfConnectedNodes = 2;
+    parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
+                   parameters);
+
+    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
+         << " " << vecOfStrToStr(parameters) << " \n\n";
   } else if (checkPars(toParse, PARS_C)) {
     cout << "C found.\n";
+
+    componentType = PARS_C;
+    numberOfConnectedNodes = 2;
+    parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
+                   parameters);
+
+    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
+         << " " << vecOfStrToStr(parameters) << " \n\n";
   } else if (checkPars(toParse, PARS_D)) {
     cout << "D found.\n";
+
+    componentType = PARS_D;
+    numberOfConnectedNodes = 2;
+    parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
+                   parameters);
+
+    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
+         << " " << vecOfStrToStr(parameters) << " \n\n";
   } else if (checkPars(toParse, PARS_V)) {
     cout << "V found.\n";
 
@@ -101,6 +125,14 @@ void Component::parseComponent(const string &toParse) {
          << " " << vecOfStrToStr(parameters) << " \n\n";
   } else if (checkPars(toParse, PARS_E)) {
     cout << "E found.\n";
+
+    componentType = PARS_E;
+    numberOfConnectedNodes = 2;
+    parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
+                   parameters);
+
+    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
+         << " " << vecOfStrToStr(parameters) << " \n\n";
   } else if (checkPars(toParse, PARS_F)) {
     cout << "F found.\n";
 
@@ -113,20 +145,44 @@ void Component::parseComponent(const string &toParse) {
          << " " << vecOfStrToStr(parameters) << " \n\n";
   } else if (checkPars(toParse, PARS_G)) {
     cout << "G found.\n";
+
+    componentType = PARS_G;
+    numberOfConnectedNodes = 2;
+    parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
+                   parameters);
+
+    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
+         << " " << vecOfStrToStr(parameters) << " \n\n";
   } else if (checkPars(toParse, PARS_H)) {
     cout << "H found.\n";
+
+    componentType = PARS_H;
+    numberOfConnectedNodes = 2;
+    parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
+                   parameters);
+
+    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
+         << " " << vecOfStrToStr(parameters) << " \n\n";
   } else if (checkPars(toParse, PARS_DOT)) {
     cout << ". found.\n";
+
+    componentType = PARS_DOT;
+    name = PARS_DOT;
+    // cuts off the comment indicator "." = PARS_DOT
+    parameters.push_back(toParse.substr(1));
+
+    cout << vecOfStrToStr(parameters) << "\n";
   } else {
     cout << "Unknown found.\n";
   }
 }
 
-string Component::getName() { return name; }
+const string Component::getName() { return name; }
 
-string Component::getNodeNameX(unsigned int x) {
-  if (x < nodeNames.size()) {
-    return nodeNames.at(x);
+const string Component::getXthNodeName(unsigned int x) {
+  if ((x > 0) && ((x - 1) < nodeNames.size())) {
+    // cout << "\n x = " << x << " " << nodeNames.at(x - 1) << "\n";
+    return nodeNames.at(x - 1);
   } else {
     return "";
   }
@@ -137,12 +193,12 @@ string Component::getNodeNameX(unsigned int x) {
 //  return nodeNames;
 //}
 
-vector<string> Component::getNodeVector() { return nodeNames; }
+// const vector<string> Component::getNodeVector() { return nodeNames; }
 
-vector<string> Component::getParameters() { return parameters; }
+const vector<string> Component::getParameters() { return parameters; }
 
-unsigned int Component::getNumberOfConnectedNodes() {
+const unsigned int Component::getNumberOfConnectedNodes() {
   return numberOfConnectedNodes;
 }
 
-string Component::getComponentType() { return componentType; }
+const string Component::getComponentType() { return componentType; }
