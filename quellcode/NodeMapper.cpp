@@ -11,9 +11,9 @@ void NodeMapper::mapNodesToComponentsKCL(list<Component> componentList) {
 
   for (auto itList = componentList.begin(); itList != componentList.end();
        itList++) {
-    if (Component::checkPars(itList->getComponentType(), PARS_CDEFGHILRV)) {
-      // get first node of current iterated component which is the current drain
-      // of the component
+    if (Component::checkPars(itList->getComponentType(), PARS_BCDEFGHILRV)) {
+      // get first node of current iterated component wich is the current drain
+      // of the component then the second wich is the current source
       editedNodeMapKirchhoffCL.currentDrains.clear();
       editedNodeMapKirchhoffCL.currentSources.clear();
 
@@ -52,7 +52,7 @@ string NodeMapper::kirchhoffEquations(void) {
   string concatKirchhoffEquations = "";
 
   for (auto& itMap : this->NodeMapKirchhoffCL) {
-    concatKirchhoffEquations += itMap.first + ": 0 =";
+    concatKirchhoffEquations += itMap.first + " | 0 =";
     for (auto& itVec : itMap.second.currentDrains) {
       concatKirchhoffEquations += " - I(" + itVec.getName() + ")";
     }

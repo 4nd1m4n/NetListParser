@@ -17,21 +17,6 @@
 
 using namespace std;
 
-// Verlinkte Listen nutzen um die Bauteile intern zu repräsentieren
-// Über die args der main Funktion Parameterübgergabe realisieren, damit man die
-// Datei sampt Pfad angeben kann, die geparst werden soll.
-// Parsen über case Fälle -> Regeln stehen in den PDF Datein prinzipiell sollte
-// das mit sscanf gehen denkbar, dass man das auch in case Fälle packt.
-// z.B. scannen des ersten Buchstaben und dann entscheiden, wie weiter gescannt
-// wird; Oder gucken, wie viele Parameter maximal in einer Zeile vorkommen
-// können getrennt von Leerzeichen und einfach immer die maximale Anzahl
-// einlesen und dann nach Fall die sinnvollen auslesen.
-
-/* Muss höchstwahrscheinlich nen eigenen Datentyp schreiben, die Frage ist, ob
- ich den aus strings oder schon als interne Darstellung abspeicher?
- Theoretisch brauche ich keine "besondere" Darstellung... Ich könnte alles
- per Buchstaben 'chars' abwickeln, bzw. über Konstanten Repräsentationen. */
-
 int main(int argc, char* argv[]) {
   cout << "LTSpice netlist parser to generate device and knot terms.\n";  // <<
   // endl;
@@ -116,6 +101,8 @@ int main(int argc, char* argv[]) {
   }
 
   cout << endl;
+
+  cout << "Kirchhoff Equations: \n\n";
 
   NodeMapper kirchhoffNodeMap;
   kirchhoffNodeMap.mapNodesToComponentsKCL(componentList);

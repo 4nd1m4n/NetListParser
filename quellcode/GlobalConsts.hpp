@@ -8,6 +8,7 @@ static const string PARS_CMNT = "*";
 static const string PARS_DOT = ".";
 
 // two nodes
+static const string PARS_B = "b";
 static const string PARS_R = "r";
 static const string PARS_L = "l";
 static const string PARS_C = "c";
@@ -21,7 +22,7 @@ static const string PARS_H = "h";
 static const string PARS_E = "e";
 static const string PARS_G = "g";
 
-// static const string PARS_RLCDVI = "rlcdvi";
-static const string PARS_CDEFGHILRV = "cdefghilrv";
+// all in one string that have at least 2 nodes
+static const string PARS_BCDEFGHILRV = "bcdefghilrv";
 
 #endif  // GLOBALCONSTS_HPP

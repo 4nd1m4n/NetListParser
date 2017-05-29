@@ -2,6 +2,8 @@
 #define COMPONENT_HPP
 
 #include <iostream>
+#include <map>
+//#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -16,6 +18,10 @@ class Component {
   Component(string toParse);
   ~Component();
 
+  void mapFirstComponentValue(const string mapKey, const vector<string> &params,
+                              map<string, string> &paramMap);
+  void checkStringForExpressions(const string &str, const vector<string> &exp,
+                                 map<string, string> &paramMap);
   static bool checkPars(const string &str, const string &pars);
   void parseToMembers(vector<string> &vecOfStr, string &componentName,
                       unsigned int &numberOfNodeConnections,
@@ -35,6 +41,7 @@ class Component {
   string name;
   vector<string> nodeNames;
   vector<string> parameters;
+  map<string, string> parameterMap;
   unsigned int numberOfConnectedNodes;
   string componentType;
 };

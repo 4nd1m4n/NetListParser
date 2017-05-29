@@ -2,23 +2,93 @@
 
 Component::Component() {
   name = "";
-  parameters.clear();
-  numberOfConnectedNodes = 0;
   nodeNames.clear();
+  parameters.clear();
+  parameterMap.clear();
+  numberOfConnectedNodes = 0;
   componentType = "";
 }
 
 Component::Component(string toParse) {
   name = "";
-  parameters.clear();
-  numberOfConnectedNodes = 0;
   nodeNames.clear();
+  parameters.clear();
+  parameterMap.clear();
+  numberOfConnectedNodes = 0;
   componentType = "";
 
   parseComponent(toParse);
 }
 
 Component::~Component() {}
+
+void Component::mapFirstComponentValue(const string mapKey,
+                                       const vector<string> &params,
+                                       map<string, string> &paramMap) {
+  double value = 0;
+  char *pEnd;
+
+  value = strtod((*params.begin()).c_str(), &pEnd);
+
+  // if pEnd does not point to the end of the string
+  if (*pEnd != '\0') {
+    switch (*pEnd) {
+      case 'f':
+        value *= 1.0e-15;
+        break;
+      case 'p':
+        value *= 1.0e-12;
+        break;
+      case 'n':
+        value *= 1.0e-9;
+        break;
+      case 'u':
+        value *= 1.0e-6;
+        break;
+      case 'm':
+        if (*(pEnd + 1) == '\0') {
+          value *= 1.0e-3;
+        } else if ((*(pEnd + 1) == 'e') && (*(pEnd + 2) == 'g')) {
+          value *= 1.0e+6;
+        }
+        break;
+      case 'k':
+        value *= 1.0e+3;
+        break;
+      case 'g':
+        value *= 1.0e+9;
+        break;
+      case 't':
+        value *= 1.0e+12;
+        break;
+      default:  // nothing
+        break;
+    }
+  }
+
+  paramMap[mapKey] = to_string(value);
+}
+
+void Component::checkStringForExpressions(const string &str,
+                                          const vector<string> &exp,
+                                          map<string, string> &paramMap) {
+  map<unsigned int, string> expPositions;
+
+  for (auto expIt = exp.begin(); expIt != exp.end(); expIt++) {
+    if (str.length() >= (*expIt).length()) {
+      size_t found = str.find(*expIt);
+      if (found != string::npos) {
+        expPositions[str.find(*expIt)] = *expIt;
+      }
+    }
+  }
+  for (auto expPosIt = expPositions.begin(); expPosIt != expPositions.end();
+       expPosIt++) {
+    unsigned int start = (*expPosIt).first + (*expPosIt).second.length();
+    unsigned int length = (*next(expPosIt, 1)).first - start;
+    paramMap[(*expPosIt).second] = str.substr(start, length);
+  }
+}
 
 bool Component::checkPars(const string &str, const string &pars) {
   for (unsigned int i = 0; i < pars.size(); i++) {
@@ -45,9 +115,10 @@ void Component::parseToMembers(vector<string> &vecOfStr, string &componentName,
 
 void Component::parseComponent(const string &toParse) {
   name = "";
-  parameters.clear();
-  numberOfConnectedNodes = 0;
   nodeNames.clear();
+  parameters.clear();
+  parameterMap.clear();
+  numberOfConnectedNodes = 0;
   componentType = "";
 
   vector<string> splittedToParse = split(toParse, ' ');
@@ -62,6 +133,20 @@ void Component::parseComponent(const string &toParse) {
 
     cout << vecOfStrToStr(parameters) << "\n";
 
+  } else if (checkPars(toParse, PARS_B)) {
+    cout << "B found.\n";
+
+    componentType = PARS_B;
+    numberOfConnectedNodes = 2;
+    parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
+                   parameters);
+
+    // string params = vecOfStrToStr(parameters);
+    // vector<string> expressions = split("i i= v v=", ' ');
+    // parameterMap = checkStringForExpressions(params, expressions);
+    checkStringForExpressions(vecOfStrToStr(parameters), split("i= v=", ' '),
+                              parameterMap);
+
   } else if (checkPars(toParse, PARS_R)) {
     cout << "R found.\n";
 
@@ -70,8 +155,7 @@ void Component::parseComponent(const string &toParse) {
     parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
                    parameters);
 
-    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
-         << " " << vecOfStrToStr(parameters) << " \n\n";
+    mapFirstComponentValue("_resistance", parameters, parameterMap);
 
   } else if (checkPars(toParse, PARS_L)) {
     cout << "L found.\n";
@@ -81,8 +165,8 @@ void Component::parseComponent(const string &toParse) {
     parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
                    parameters);
 
-    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
-         << " " << vecOfStrToStr(parameters) << " \n\n";
+    mapFirstComponentValue("_inductance", parameters, parameterMap);
+
   } else if (checkPars(toParse, PARS_C)) {
     cout << "C found.\n";
 
@@ -91,8 +175,8 @@ void Component::parseComponent(const string &toParse) {
     parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
                    parameters);
 
-    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
-         << " " << vecOfStrToStr(parameters) << " \n\n";
+    mapFirstComponentValue("_capacitance", parameters, parameterMap);
+
   } else if (checkPars(toParse, PARS_D)) {
     cout << "D found.\n";
 
@@ -101,8 +185,6 @@ void Component::parseComponent(const string &toParse) {
     parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
                    parameters);
 
-    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
-         << " " << vecOfStrToStr(parameters) << " \n\n";
   } else if (checkPars(toParse, PARS_V)) {
     cout << "V found.\n";
 
@@ -111,8 +193,10 @@ void Component::parseComponent(const string &toParse) {
     parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
                    parameters);
 
-    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
-         << " " << vecOfStrToStr(parameters) << " \n\n";
+    mapFirstComponentValue("_voltage", parameters, parameterMap);
+    checkStringForExpressions(vecOfStrToStr(parameters), split("ac ac=", ' '),
+                              parameterMap);
+
   } else if (checkPars(toParse, PARS_I)) {
     cout << "I found.\n";
 
@@ -121,18 +205,20 @@ void Component::parseComponent(const string &toParse) {
     parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
                    parameters);
 
-    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
-         << " " << vecOfStrToStr(parameters) << " \n\n";
+    mapFirstComponentValue("_current", parameters, parameterMap);
+
   } else if (checkPars(toParse, PARS_E)) {
     cout << "E found.\n";
 
     componentType = PARS_E;
-    numberOfConnectedNodes = 2;
+    numberOfConnectedNodes = 4;
     parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
                    parameters);
 
-    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
-         << " " << vecOfStrToStr(parameters) << " \n\n";
+    mapFirstComponentValue("_gain", parameters, parameterMap);
+    checkStringForExpressions(vecOfStrToStr(parameters),
+                              split("value value=", ' '), parameterMap);
+
   } else if (checkPars(toParse, PARS_F)) {
     cout << "F found.\n";
 
@@ -141,18 +227,27 @@ void Component::parseComponent(const string &toParse) {
     parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
                    parameters);
 
-    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
-         << " " << vecOfStrToStr(parameters) << " \n\n";
+    if (!parameters.empty()) {
+      string vName = parameters.at(0);
+      parameters.erase(parameters.begin());
+      parameterMap["_vnam"] = vName;
+    }
+    mapFirstComponentValue("_gain", parameters, parameterMap);
+    checkStringForExpressions(vecOfStrToStr(parameters),
+                              split("value value=", ' '), parameterMap);
+
   } else if (checkPars(toParse, PARS_G)) {
     cout << "G found.\n";
 
     componentType = PARS_G;
-    numberOfConnectedNodes = 2;
+    numberOfConnectedNodes = 4;
     parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
                    parameters);
 
-    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
-         << " " << vecOfStrToStr(parameters) << " \n\n";
+    mapFirstComponentValue("_gain", parameters, parameterMap);
+    checkStringForExpressions(vecOfStrToStr(parameters),
+                              split("value value=", ' '), parameterMap);
+
   } else if (checkPars(toParse, PARS_H)) {
     cout << "H found.\n";
 
@@ -161,8 +256,15 @@ void Component::parseComponent(const string &toParse) {
     parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
                    parameters);
 
-    cout << "\n " << name << " " << nodeNames.at(0) << " " << nodeNames.at(1)
-         << " " << vecOfStrToStr(parameters) << " \n\n";
+    if (!parameters.empty()) {
+      string vName = parameters.at(0);
+      parameters.erase(parameters.begin());
+      parameterMap["_vnam"] = vName;
+    }
+    mapFirstComponentValue("_transresistance", parameters, parameterMap);
+    checkStringForExpressions(vecOfStrToStr(parameters),
+                              split("value value=", ' '), parameterMap);
+
   } else if (checkPars(toParse, PARS_DOT)) {
     cout << ". found.\n";
 
@@ -171,17 +273,22 @@ void Component::parseComponent(const string &toParse) {
     // cuts off the comment indicator "." = PARS_DOT
     parameters.push_back(toParse.substr(1));
 
-    cout << vecOfStrToStr(parameters) << "\n";
   } else {
     cout << "Unknown found.\n";
   }
+
+  // Output every parsed component
+  cout << /*"\n" <<*/ name << " ";
+  for (auto it : nodeNames) {
+    cout << it << " ";
+  }
+  cout << vecOfStrToStr(parameters) << "\n" << mapToStr(parameterMap) << "\n";
 }
 
 const string Component::getName() { return name; }
 
 const string Component::getXthNodeName(unsigned int x) {
   if ((x > 0) && ((x - 1) < nodeNames.size())) {
-    // cout << "\n x = " << x << " " << nodeNames.at(x - 1) << "\n";
     return nodeNames.at(x - 1);
   } else {
     return "";

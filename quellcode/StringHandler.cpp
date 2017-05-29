@@ -27,3 +27,11 @@ std::string vecOfStrToStr(std::vector<std::string> vecOfStr) {
   }
   return concatStrOfVec;
 }
+
+std::string mapToStr(std::map<std::string, std::string> mapOfStr) {
+  std::string concatStr = "";
+  for (auto &it : mapOfStr) {
+    concatStr += it.first + " | " + it.second + "\n";
+  }
+  return concatStr;
+}

@@ -1,4 +1,4 @@
---- Expanded Netlist ---
+    --- Expanded Netlist ---
 * C:\users\aschau\Meine Dokumente\Master Drittes Semester\Übergabe_Schau\OPV-ideal.asc
 r2 p out 10k
 r1 in p 1k
@@ -14,6 +14,3 @@ r4 in n001 1k
 .op
 .options gfloat=0.0
 .end
-
-WARNING: Node U1:1:H is floating.
-WARNING: Node U2:H is floating.
