@@ -46,10 +46,10 @@ void Component::mapFirstComponentValue(const string mapKey,
         value *= 1.0e-6;
         break;
       case 'm':
-        if (*(pEnd + 1) == '\0') {
-          value *= 1.0e-3;
-        } else if ((*(pEnd + 1) == 'e') && (*(pEnd + 2) == 'g')) {
+        if ((*(pEnd + 1) == 'e') && (*(pEnd + 2) == 'g')) {
           value *= 1.0e+6;
+        } else {
+          value *= 1.0e-3;
         }
         break;
       case 'k':
@@ -222,6 +222,8 @@ void Component::parseComponent(const string &toParse) {
   } else if (checkPars(toParse, PARS_F)) {
     cout << "F found.\n";
 
+    // F Ausgabe ist momentan falsch, da vnam fehlt.
+
     componentType = PARS_F;
     numberOfConnectedNodes = 2;
     parseToMembers(splittedToParse, name, numberOfConnectedNodes, nodeNames,
@@ -282,6 +284,13 @@ void Component::parseComponent(const string &toParse) {
   for (auto it : nodeNames) {
     cout << it << " ";
   }
+
+  // will output the name in _vnam for f and h to complete the output line
+  auto iter = parameterMap.find("_vnam");
+  if (iter != parameterMap.end()) {
+    cout << iter->second << " ";
+  }
+
   cout << vecOfStrToStr(parameters) << "\n" << mapToStr(parameterMap) << "\n";
 }
 
