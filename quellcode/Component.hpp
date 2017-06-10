@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <map>
-//#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -14,8 +13,7 @@ using namespace std;
 
 class Component {
  public:
-  Component();
-  Component(string toParse);
+  Component(const string &setOutputDepth = OUT_ALL);
   ~Component();
 
   void mapFirstComponentValue(const string mapKey, const vector<string> &params,
@@ -26,12 +24,10 @@ class Component {
   void parseToMembers(vector<string> &vecOfStr, string &componentName,
                       unsigned int &numberOfNodeConnections,
                       vector<string> &vecOfNodeNames, vector<string> &params);
-  void parseComponent(const string &toParse);
+  void parseComponent(const string &toParse, const string &setOutputDepth = "");
 
   const string getName();
   const string getXthNodeName(unsigned int x);
-  // list<string> getNodeList();
-  // const vector<string> getNodeVector();
   const vector<string> getParameters();
   const unsigned int getNumberOfConnectedNodes();
   const string getComponentType();
@@ -44,6 +40,8 @@ class Component {
   map<string, string> parameterMap;
   unsigned int numberOfConnectedNodes;
   string componentType;
+
+  string outputDepth;
 };
 
 #endif  // COMPONENT_HPP

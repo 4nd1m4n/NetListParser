@@ -1,13 +1,8 @@
 #include <iomanip>
 #include <iostream>
-//#include <stdio.h>
-//#include <string>
 #include <string.h>
 #include <fstream>
 #include <list>
-//#include <sstream>
-//#include <cctype>
-//#include <ctype.h>
 #include <sys/stat.h>
 #include <algorithm>
 
@@ -18,18 +13,47 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-  cout << "LTSpice netlist parser to generate device and knot terms.\n";  // <<
-  // endl;
+  cout << "\nStarting LTSpice netlist parser to generate device and node "
+          "terms.\n";
 
   string filePath;
+  string outputDepth = "";
+  string tempCompare = "";
 
   for (int i = 1; i < argc; i++) {
     if ((strcmp(argv[i], "-f") == 0) && (i < argc - 1)) {
       filePath = argv[i + 1];
       i += 2;
+    } else if ((strcmp(argv[i], "-o") == 0) && (i < argc - 1)) {
+      tempCompare = argv[i + 1];
+      if (tempCompare.find(OUT_KIRCHHOFF) != string::npos) {
+        outputDepth += OUT_KIRCHHOFF;
+      }
+      if (tempCompare.find(OUT_EXTENDED) != string::npos) {
+        outputDepth += OUT_EXTENDED;
+      }
+      if (tempCompare.find(OUT_FOUND) != string::npos) {
+        outputDepth += OUT_FOUND;
+      }
+      if (tempCompare.find(OUT_INFILE) != string::npos) {
+        outputDepth += OUT_INFILE;
+      }
+      if (tempCompare.find("a") != string::npos) {
+        outputDepth += OUT_ALL;
+      }
+      i += 2;
+    } else if ((strcmp(argv[i], "-h") == 0) || (strcmp(argv[i], "--help") == 0)) {
+      cout << MSG_USAGE;
+      i += 1;
+      return 151;
     } else {
       filePath = argv[i];
     }
+  }
+
+  // if no output depth was specified output all
+  if (outputDepth == "") {
+    outputDepth = OUT_ALL;
   }
 
   struct stat statfile;
@@ -39,6 +63,7 @@ int main(int argc, char* argv[]) {
       cout << "Error: Path points to a directory but must point to a file "
               "instead!\n"
            << endl;
+      cout << MSG_USAGE;      
       return -1;
     } else if (statfile.st_mode & S_IFREG) {
       // it's a file
@@ -48,24 +73,27 @@ int main(int argc, char* argv[]) {
       cout << "Error: File is not valid or not a real file! (Might be a "
               "link...)\n"
            << endl;
+      cout << MSG_USAGE;
       return -1;
     }
   } else {
     // error
     cout << "Error: File is not valid or may not exist!\n" << endl;
+    cout << MSG_USAGE;
+    return -1;
+  }
+
+  ifstream netListFile(filePath.c_str());
+  if (!netListFile.good()) {
+    cout << "File does not exist or is otherwise invalid!\n" << endl;
+    netListFile.close();
+    cout << MSG_USAGE;
     return -1;
   }
 
   // reading file lines to memory
   // list containing file contents
   list<string> netList;
-  ifstream netListFile(filePath.c_str());
-  if (!netListFile.good()) {
-    cout << "File does not exist or is otherwise invalid!\n" << endl;
-    netListFile.close();
-    return -1;
-  }
-
   string lineContents;
 
   while (!netListFile.eof()) {
@@ -81,20 +109,23 @@ int main(int argc, char* argv[]) {
   // output of list contents
   unsigned int lineNumber = 0;
 
-  for (auto const& itNL : netList) {
-    lineNumber++;
-    cout << setw(3) << lineNumber << ": " << itNL << "\n";
+  if (outputDepth.find(OUT_INFILE) != string::npos) {
+    for (auto const& itNL : netList) {
+      lineNumber++;
+      cout << setw(3) << lineNumber << ": " << itNL << "\n";
+    }
   }
 
-  cout << endl;
-
   list<Component> componentList;
-  Component newComponent;
+  Component newComponent(outputDepth);
 
   lineNumber = 0;
   for (auto const& itNL : netList) {
-    lineNumber++;
-    cout << setw(3) << lineNumber << ": ";
+    if ((outputDepth.find(OUT_FOUND) != string::npos) ||
+        (outputDepth.find(OUT_EXTENDED) != string::npos)) {
+      lineNumber++;
+      cout << setw(3) << lineNumber << ": ";
+    }
 
     newComponent.parseComponent(itNL);
     componentList.push_back(newComponent);
@@ -102,11 +133,14 @@ int main(int argc, char* argv[]) {
 
   cout << endl;
 
-  cout << "Kirchhoff Equations: \n\n";
+  if (outputDepth.find(OUT_KIRCHHOFF) != string::npos) {
+    cout << "Kirchhoff Equations: \n\n";
 
-  NodeMapper kirchhoffNodeMap;
-  kirchhoffNodeMap.mapNodesToComponentsKCL(componentList);
-  cout << kirchhoffNodeMap.kirchhoffEquations();
+    NodeMapper kirchhoffNodeMap;
+    kirchhoffNodeMap.mapNodesToComponentsKCL(componentList);
+
+    cout << kirchhoffNodeMap.kirchhoffEquations();
+  }
 
   cout << "\nNetListParser Exit.\n\n";
 

@@ -1,23 +1,13 @@
 #include "Component.hpp"
 
-Component::Component() {
+Component::Component(const string &setOutputDepth) {
   name = "";
   nodeNames.clear();
   parameters.clear();
   parameterMap.clear();
   numberOfConnectedNodes = 0;
   componentType = "";
-}
-
-Component::Component(string toParse) {
-  name = "";
-  nodeNames.clear();
-  parameters.clear();
-  parameterMap.clear();
-  numberOfConnectedNodes = 0;
-  componentType = "";
-
-  parseComponent(toParse);
+  outputDepth = setOutputDepth;
 }
 
 Component::~Component() {}
@@ -113,28 +103,34 @@ void Component::parseToMembers(vector<string> &vecOfStr, string &componentName,
   params.assign(vecOfStr.begin() + 1 + numberOfNodeConnections, vecOfStr.end());
 }
 
-void Component::parseComponent(const string &toParse) {
+void Component::parseComponent(const string &toParse,
+                               const string &setOutputDepth) {
   name = "";
   nodeNames.clear();
   parameters.clear();
   parameterMap.clear();
   numberOfConnectedNodes = 0;
   componentType = "";
+  if (setOutputDepth != "") {
+    outputDepth = setOutputDepth;
+  }
 
   vector<string> splittedToParse = split(toParse, ' ');
 
   if (checkPars(toParse, PARS_CMNT)) {
-    cout << "* found.\n";
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << "* found.\n";
+    }
 
     componentType = PARS_CMNT;
     name = PARS_CMNT;
     // cuts off the comment indicator "*" = PARS_CMNT
     parameters.push_back(toParse.substr(1));
 
-    cout << vecOfStrToStr(parameters) << "\n";
-
   } else if (checkPars(toParse, PARS_B)) {
-    cout << "B found.\n";
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << "B found.\n";
+    }
 
     componentType = PARS_B;
     numberOfConnectedNodes = 2;
@@ -148,7 +144,9 @@ void Component::parseComponent(const string &toParse) {
                               parameterMap);
 
   } else if (checkPars(toParse, PARS_R)) {
-    cout << "R found.\n";
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << "R found.\n";
+    }
 
     componentType = PARS_R;
     numberOfConnectedNodes = 2;
@@ -158,7 +156,9 @@ void Component::parseComponent(const string &toParse) {
     mapFirstComponentValue("_resistance", parameters, parameterMap);
 
   } else if (checkPars(toParse, PARS_L)) {
-    cout << "L found.\n";
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << "L found.\n";
+    }
 
     componentType = PARS_L;
     numberOfConnectedNodes = 2;
@@ -168,7 +168,9 @@ void Component::parseComponent(const string &toParse) {
     mapFirstComponentValue("_inductance", parameters, parameterMap);
 
   } else if (checkPars(toParse, PARS_C)) {
-    cout << "C found.\n";
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << "C found.\n";
+    }
 
     componentType = PARS_C;
     numberOfConnectedNodes = 2;
@@ -178,7 +180,9 @@ void Component::parseComponent(const string &toParse) {
     mapFirstComponentValue("_capacitance", parameters, parameterMap);
 
   } else if (checkPars(toParse, PARS_D)) {
-    cout << "D found.\n";
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << "D found.\n";
+    }
 
     componentType = PARS_D;
     numberOfConnectedNodes = 2;
@@ -186,7 +190,9 @@ void Component::parseComponent(const string &toParse) {
                    parameters);
 
   } else if (checkPars(toParse, PARS_V)) {
-    cout << "V found.\n";
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << "V found.\n";
+    }
 
     componentType = PARS_V;
     numberOfConnectedNodes = 2;
@@ -198,7 +204,9 @@ void Component::parseComponent(const string &toParse) {
                               parameterMap);
 
   } else if (checkPars(toParse, PARS_I)) {
-    cout << "I found.\n";
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << "I found.\n";
+    }
 
     componentType = PARS_I;
     numberOfConnectedNodes = 2;
@@ -208,7 +216,9 @@ void Component::parseComponent(const string &toParse) {
     mapFirstComponentValue("_current", parameters, parameterMap);
 
   } else if (checkPars(toParse, PARS_E)) {
-    cout << "E found.\n";
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << "E found.\n";
+    }
 
     componentType = PARS_E;
     numberOfConnectedNodes = 4;
@@ -220,9 +230,9 @@ void Component::parseComponent(const string &toParse) {
                               split("value value=", ' '), parameterMap);
 
   } else if (checkPars(toParse, PARS_F)) {
-    cout << "F found.\n";
-
-    // F Ausgabe ist momentan falsch, da vnam fehlt.
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << "F found.\n";
+    }
 
     componentType = PARS_F;
     numberOfConnectedNodes = 2;
@@ -239,7 +249,9 @@ void Component::parseComponent(const string &toParse) {
                               split("value value=", ' '), parameterMap);
 
   } else if (checkPars(toParse, PARS_G)) {
-    cout << "G found.\n";
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << "G found.\n";
+    }
 
     componentType = PARS_G;
     numberOfConnectedNodes = 4;
@@ -251,7 +263,9 @@ void Component::parseComponent(const string &toParse) {
                               split("value value=", ' '), parameterMap);
 
   } else if (checkPars(toParse, PARS_H)) {
-    cout << "H found.\n";
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << "H found.\n";
+    }
 
     componentType = PARS_H;
     numberOfConnectedNodes = 2;
@@ -268,7 +282,9 @@ void Component::parseComponent(const string &toParse) {
                               split("value value=", ' '), parameterMap);
 
   } else if (checkPars(toParse, PARS_DOT)) {
-    cout << ". found.\n";
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << ". found.\n";
+    }
 
     componentType = PARS_DOT;
     name = PARS_DOT;
@@ -276,22 +292,29 @@ void Component::parseComponent(const string &toParse) {
     parameters.push_back(toParse.substr(1));
 
   } else {
-    cout << "Unknown found.\n";
+    if (outputDepth.find(OUT_FOUND) != string::npos) {
+      cout << "!!! Unknown found:\n" << toParse << "\n";
+    }
   }
 
   // Output every parsed component
-  cout << /*"\n" <<*/ name << " ";
-  for (auto it : nodeNames) {
-    cout << it << " ";
-  }
+  if (outputDepth.find(OUT_FOUND) != string::npos) {
+    cout << name << " ";
+    for (auto it : nodeNames) {
+      cout << it << " ";
+    }
 
-  // will output the name in _vnam for f and h to complete the output line
-  auto iter = parameterMap.find("_vnam");
-  if (iter != parameterMap.end()) {
-    cout << iter->second << " ";
-  }
+    // will output the name in _vnam for f and h to complete the output line
+    auto iter = parameterMap.find("_vnam");
+    if (iter != parameterMap.end()) {
+      cout << iter->second << " ";
+    }
 
-  cout << vecOfStrToStr(parameters) << "\n" << mapToStr(parameterMap) << "\n";
+    cout << vecOfStrToStr(parameters) << "\n";
+  }
+  if (outputDepth.find(OUT_EXTENDED) != string::npos) {
+    cout << mapToStr(parameterMap) << "\n";
+  }
 }
 
 const string Component::getName() { return name; }

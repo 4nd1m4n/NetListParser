@@ -4,6 +4,35 @@
 #include <string>
 using namespace std;
 
+static const string MSG_USAGE = 
+  "\n"
+  "NetListParser must be called with at least one parameter "
+  "wich must be a file containing an expanded netlist from the "
+  "LTSpice error log following the line '--- Expanded Netlist ---' "
+  "to including '.end.'\n"
+  "\n"
+  "The filename can follow directly after the program call but can "
+  "also be specified after '-f' like '-f netlistfile.exnet'\n"
+  "\n"
+  "It is also possible to influence the ouput with '-o' followed "
+  "by a char or string of chars.\n"
+  "a for output all\n"
+  "i for output input file\n"
+  "f for output components found\n"
+  "e for output extended parameters and\n"
+  "k for output of the Kirchhoffschen node terms.\n"
+  "\n"
+  "Example: './NetListParser.exc -o fek -f netlist.exnet' for output "
+  "of components found, extended parameters and the Kirchhoffschen "
+  "node terms of the netlist.exnet file in one program call.\n"
+  "\n";
+
+static const string OUT_KIRCHHOFF = "k";
+static const string OUT_EXTENDED = "e";
+static const string OUT_FOUND = "f";
+static const string OUT_INFILE = "i";
+static const string OUT_ALL = "kefi";
+
 static const string PARS_CMNT = "*";
 static const string PARS_DOT = ".";
 
