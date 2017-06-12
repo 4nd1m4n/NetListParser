@@ -1,5 +1,8 @@
 #include "StringHandler.hpp"
 
+// source of this section is from:
+// https://stackoverflow.com/questions/236129/split-a-string-in-c/7408245
+
 template <typename Out>
 void split(const std::string &s, char delim, Out result) {
   std::stringstream ss;
@@ -15,6 +18,9 @@ std::vector<std::string> split(const std::string &s, char delim) {
   split(s, delim, std::back_inserter(elems));
   return elems;
 }
+
+// https://stackoverflow.com/questions/236129/split-a-string-in-c/7408245
+// end of this section
 
 std::string vecOfStrToStr(std::vector<std::string> vecOfStr) {
   std::string concatStrOfVec = "";
